@@ -3,6 +3,8 @@ const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 
+const predefinedAnswersRoutes = require("./routes/predefindAnswerRoute");
+const chatRoutes = require("./routes/chatRoute");
 
 // express app
 const app = express();
@@ -27,6 +29,8 @@ app.get("/", (req, res) => {
     res.status(200).json({ message: "Welcome to the quirkle server!" });
 });
 
+app.use("/api/predefined-answers", predefinedAnswersRoutes);
+app.use("/api/chat", chatRoutes);
 
 // mongodb
 mongoose.set("strictQuery", false);
