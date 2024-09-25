@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
             const matchedAnswer = result[0].item.answer;
             return res.json({ response: matchedAnswer });
         } else {
-            return res.json({ response: "No matching answer found." });
+            return res.json({ response: "Server is processing your request. Please wait while we search for the answer, or try again in a moment!" });
         }
     } catch (error) {
         res.status(400).json({
