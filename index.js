@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 const predefinedAnswersRoutes = require("./routes/predefindAnswerRoute");
 const chatRoutes = require("./routes/chatRoute");
+const userRoute = require("./routes/userRoute");
 
 // express app
 const app = express();
@@ -26,9 +27,10 @@ app.use((req, res, next) => {
 
 // test api
 app.get("/", (req, res) => {
-    res.status(200).json({ message: "Welcome to the quirkle server!" });
+    res.status(200).json({ message: "Welcome to the celestia server!" });
 });
 
+app.use("/api/users", userRoute);
 app.use("/api/predefined-answers", predefinedAnswersRoutes);
 app.use("/api/chat", chatRoutes);
 
