@@ -2,29 +2,36 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
 const isAuthenticated = async (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization || "";
+    const tokenMatch = authHeader.match(/^Bearer\s+(\S+)$/i);
 
-    if (!authHeader || !authHeader.startsWith("Bearer")) {
-      throw new error("Invalid token format.");
+    if (!tokenMatch) {
+        return res.status(401).json({ error: "A valid bearer token is required." });
     }
 
-    const token = authHeader.split(" ")[1];
-
-    if (!token) {
-      throw new error("No token provided");
+    let payload;
+    try {
+        payload = jwt.verify(tokenMatch[1], process.env.JWT_SECRET);
+    } catch (error) {
+        return res.status(401).json({ error: "Invalid or expired token." });
     }
 
-    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+    if (!payload || typeof payload.id !== "string") {
+        return res.status(401).json({ error: "Invalid token payload." });
+    }
 
-    req.user = await User.findById(id);
+    try {
+        req.user = await User.findById(payload.id);
+    } catch (error) {
+        console.error("Could not verify the authenticated user:", error);
+        return res.status(500).json({ error: "Could not verify the account." });
+    }
 
-    next();
-  } catch (error) {
-    if (error.name === "jsonWebTokenError") {
-      res.status(401).json({ error: "Invalid token" });
-    } else res.status(403).json({ error: "Unauthorized access" });
-  }
+    if (!req.user) {
+        return res.status(401).json({ error: "Account no longer exists." });
+    }
+
+    return next();
 };
 
 module.exports = { isAuthenticated };

@@ -15,7 +15,15 @@ const createUser = async (req, res) => {
 
     const token = createToken(user._id);
 
-    res.status(200).json({ user, token });
+    res.status(200).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      },
+      token
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -30,7 +38,15 @@ const loginUser = async (req, res) => {
 
     const token = createToken(user._id);
 
-    res.status(200).json({ user, token });
+    res.status(200).json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      },
+      token
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
